@@ -41,7 +41,7 @@ class WB_Seller(object):
         }
 
 
-    def get_status(self):
+    def get_status(r):
         r = requests.get(self.url ,headers=self.headers)
         status = r.status_code
         return status
@@ -52,7 +52,7 @@ class WB_Seller(object):
         return self.data
 
     def get_df(self):
-        print(type(self.data))
+        #print(type(self.data))
         d = self.data
         df = pd.DataFrame()
         df = df.append(d, ignore_index=True)
@@ -62,7 +62,7 @@ class WB_Seller(object):
         r_list = []
         u_list = []
         
-        print(self.id_list)
+        #print(self.id_list)
         for url in [self.URL_USER % i for i in self.id_list]:
 
             r_u = requests.get(url ,headers=self.HEADERS_USER)
@@ -71,12 +71,22 @@ class WB_Seller(object):
         df_u = df_u.append(u_list, ignore_index=True)
         df_u['id'] = df_u['id'].astype("Int64")
         df_u.rename(columns = {'name':'Наименование','trademark':'Товарный знак','ogrn':'ОГРН',}, inplace = True)
-        print(df_u)
+        #print(df_u)
 
         for url in [self.URL_RATING % i for i in self.id_list]:
-
+            id = url.rsplit('/', 1)
             r_r = requests.get(url ,headers=self.HEADERS_RATING)
-            r_list.append(json.loads(r_r.text))
+            status = r_r.status_code
+            data = json.loads(r_r.text)
+            print(type(data))
+            print(data)
+            if status == 200:
+                if not data.get("id", None):
+                    data = {'id':'1','saleItemQuantity':'1'}
+                    print(data)
+                    r_list.append(data)
+                else:
+                    r_list.append(data)
         df_r = pd.DataFrame()
         df_r = df_r.append(r_list, ignore_index=True)
         df_r['id'] = df_r['id'].astype("Int64")#.replace('.0','')
@@ -85,6 +95,6 @@ class WB_Seller(object):
         print(df_r)
 
         df = df_u.set_index('id').join(df_r.set_index('id'))
-
+        df = df.dropna(subset=['Проданно товаров','deliveryDuration'])
         return df
 
