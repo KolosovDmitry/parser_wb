@@ -17,15 +17,6 @@ df_u['Месяцев'] = df_u['Месяцев'].astype("Int64")
 df_u['Проданно товаров'] = df_u['Проданно товаров'].astype(int)
 df_u['Среднее к-во продаж в месяц'] =  df_u['Проданно товаров'] / df_u['Месяцев']
 df_u['Среднее к-во продаж в месяц'] = df_u['Среднее к-во продаж в месяц'].astype("Int64")
-#np.round(df_u['Месяцев'] / df_u['Проданно товаров'], decimals = 0)
-print(df_u)
-df_u.to_excel('test.xlsx')#, index=False)
-#print(wb.get_status())
-# if wb.get_status() == 200:
-#     data = wb.get_json()
-#     df = wb.get_df()
-#     if data['isUnknown'] == True:
-#         data = 'Нет токого продовца'
-# else:
-#     data = 'Нет токого продовца'
-# print(df)
+
+
+df_u.to_excel('test.xlsx')

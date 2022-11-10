@@ -61,7 +61,7 @@ class WB_Seller(object):
     def get_list_url(self):
         r_list = []
         u_list = []
-        #print(type(self.url_list))
+        
         print(self.id_list)
         for url in [self.URL_USER % i for i in self.id_list]:
 
@@ -87,4 +87,4 @@ class WB_Seller(object):
         df = df_u.set_index('id').join(df_r.set_index('id'))
 
         return df
-#ignore_index=True
+
