@@ -67,6 +67,7 @@ class WB_Seller(object):
 
             r_u = requests.get(url ,headers=self.HEADERS_USER)
             u_list.append(json.loads(r_u.text))
+            
         df_u = pd.DataFrame()
         df_u = df_u.append(u_list, ignore_index=True)
         df_u['id'] = df_u['id'].astype("Int64")
@@ -74,25 +75,26 @@ class WB_Seller(object):
         #print(df_u)
 
         for url in [self.URL_RATING % i for i in self.id_list]:
+            k = 1 
             id = url.rsplit('/', 1)
             r_r = requests.get(url ,headers=self.HEADERS_RATING)
             status = r_r.status_code
             data = json.loads(r_r.text)
-            print(type(data))
-            print(data)
+           
             if status == 200:
                 if not data.get("id", None):
-                    data = {'id':'1','saleItemQuantity':'1'}
-                    print(data)
+                    data = {'id': str(id),'saleItemQuantity':'1'}
+                    
                     r_list.append(data)
                 else:
                     r_list.append(data)
+        print(r_list)
         df_r = pd.DataFrame()
         df_r = df_r.append(r_list, ignore_index=True)
         df_r['id'] = df_r['id'].astype("Int64")#.replace('.0','')
         df_r.rename(columns = {'saleItemQuantity': 'Проданно товаров', 'registrationDate':'Дата регистрации','valuation':'Рейтинг','feedbacksCount':'Отзывов'}, inplace = True)
 
-        print(df_r)
+        
 
         df = df_u.set_index('id').join(df_r.set_index('id'))
         df = df.dropna(subset=['Проданно товаров','deliveryDuration'])
